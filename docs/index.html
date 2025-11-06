@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RSA 补丁工具箱 / RSA PATCH TOOLKIT</title>
+  <meta name="description" content="用于 半字节/1字节/固定CRC32 补丁辅助的极客小工具箱。" />
+  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#0b0b0f" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="RSA 补丁工具箱 / RSA PATCH TOOLKIT" />
+  <meta property="og:description" content="用于 半字节/1字节/固定CRC32 补丁辅助的极客小工具箱。" />
+  <meta property="og:image" content="./cover.png" />
+  <meta property="og:url" content="" />
+  <link rel="icon" href="./favicon.ico" />
+  <style>
+    body{background:#0b0b0f;color:#e8eaf6;font-family:system-ui,Segoe UI,Roboto,"PingFang SC";margin:0;padding:0}
+    .container{width:min(1100px,94%);margin:auto;padding:20px}
+    h1,h2,h3{color:#00e0ff}
+    a{color:#61dafb;text-decoration:none}
+    a:hover{text-decoration:underline}
+    .btn{display:inline-block;padding:10px 18px;border-radius:12px;border:1px solid #00e0ff;background:rgba(0,224,255,.1);color:#e8eaf6;margin:6px 4px}
+    footer{margin-top:40px;border-top:1px solid rgba(255,255,255,.2);padding-top:12px;text-align:center;color:#8b8ca6}
+    .muted{color:#8b8ca6}
+    
+    /* 截图区域样式 */
+    .screenshots-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: 20px;
+    }
+    .screenshot-item {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0, 224, 255, 0.15);
+      transition: transform 0.3s ease;
+    }
+    .screenshot-item:hover {
+      transform: translateY(-5px);
+    }
+    .screenshot-img {
+      width: 100%;
+      height: auto;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .screenshot-caption {
+      padding: 12px 16px;
+      margin: 0;
+      background: rgba(11, 11, 15, 0.5);
+      color: #e8eaf6;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 data-i18n="hero.title">RSA 补丁工具箱</h1>
+    <p class="subtitle" data-i18n="hero.tag">“RSA 补丁工具箱（RSA PATCH TOOLKIT）并不适合用于分解大数，只是为了好玩；用于半字节 / 1 字节 / 固定 CRC32 补丁辅助。”</p>
+    <div>
+      <a href="#download" class="btn" data-i18n="hero.cta">立即下载</a>
+      <a href="#guide" class="btn" data-i18n="hero.guide">新手指南</a>
+      <a href="#shots" class="btn" data-i18n="hero.screens">界面截图</a>
+    </div>
+
+
+    <!-- === RSA Examples (placed BEFORE "Quick Start") === -->
+    <style>
+      .doc-card { border:1px solid #e5e7eb; border-radius:10px; padding:16px 18px; margin:20px 0; background:#fff; }
+      .doc-card h2 { margin:0 0 8px 0; font-size:1.25rem; line-height:1.6; }
+      .doc-card h3 { margin:12px 0 8px 0; font-size:1.05rem; }
+      .doc-card p { margin:8px 0; color:#374151; }
+      .doc-card .muted { color:#6b7280; font-size:0.95rem; }
+      .mono-box {
+        color:darkblue;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        white-space: pre-wrap; word-break: break-all;
+        border: 1px solid #f3f4f6; border-radius: 8px; padding: 12px; background: #fafafa; margin-top:10px;
+      }
+      /* N line (original N) with green background */
+      .mono-box--n { background:#ecfdf5; border-color:#d1fae5; }
+      .mono-box b.diff-red { color:#ff5252; font-weight:700; }
+      /* i18n visibility */
+      .i18n-zh { display:none; } .i18n-en { display:none; }
+      html[lang="zh-CN"] .i18n-zh { display:block; }
+      html[lang="en"] .i18n-en { display:block; }
+    </style>
+
+    <section id="rsa-examples" class="doc-card">
+      <div class="i18n-zh">
+        <h2>AI 辅助说明</h2>
+        <p class="muted">本软件的部分功能实现与本页面文档编写借助了 AI 辅助，以提升开发与说明效率。</p>
+        <h3>例子</h3>
+
+        <p>原始 N：</p>
+        <div class="mono-box mono-box--n"><b>N</b> = duDe1rHc22OLeI9tElSwEIhKIx9X/VOEDWC2jGDo1iUitTWFaROy1KHuYRi/ruz19BZIUUE5xIUeL7tzVmCasufYKwzj2MWTzpZdHjDMoU4ow5o5oa2j2soUnSQn6K5VSfhGxxnhmtcwoBp3qiaM3p085zkdyye46Cx4jaS+nSk</div>
+
+        <p>半字节变换（与 N 差异最小）：</p>
+        <div class="mono-box"><b>N1</b> = duDe1rHc22OLeI9tElSw<b class="diff-red">B</b>IhKIx9X/VOEDWC2jGDo1iUitTWFaROy1KHuYRi/ruz19BZIUUE5xIUeL7tzVmCasufYKwzj2MWTzpZdHjDMoU4ow5o5oa2j2soUnSQn6K5VSfhGxxnhmtcwoBp3qiaM3p085zkdyye46Cx4jaS+nSk</div>
+
+        <p>固定 CRC32 变换（替换后 CRC32 不变）：</p>
+        <div class="mono-box"><b>N2</b> = duDe1<b class="diff-red">I</b>Hc22OLeI9tElSwEIhKIx9X/VOEDWC2jGDo1iUitTWFaROy1<b class="diff-red">H</b>HuY<b class="diff-red">R</b>S/ruz19BZIUUE5xIUeL7tzVmCasuf<b class="diff-red">Q</b>Kwzj2MWTzpZdHjDMoU4ow5o5oa2j2soUnSQ<b class="diff-red">y</b>6K5VSfhGxxnhmtc<b class="diff-red">w</b>kBp3q<b class="diff-red">N</b>aM3p085zkdyye4<b class="diff-red">J</b>C<b class="diff-red">x</b>fjaS+nSk</div>
+
+        <p>其他演示变体：</p>
+        <div class="mono-box"><b>N3</b> = <b class="diff-red">k</b><b class="diff-red">e</b><b class="diff-red">y</b><b class="diff-red">g</b><b class="diff-red">e</b><b class="diff-red">n</b><b class="diff-red">G</b><b class="diff-red">e</b><b class="diff-red">n</b><b class="diff-red">e</b><b class="diff-red">r</b><b class="diff-red">a</b><b class="diff-red">t</b><b class="diff-red">e</b><b class="diff-red">d</b><b class="diff-red">B</b><b class="diff-red">y</b><b class="diff-red">S</b><b class="diff-red">o</b><b class="diff-red">m</b><b class="diff-red">e</b><b class="diff-red">C</b><b class="diff-red">o</b><b class="diff-red">o</b><b class="diff-red">l</b><b class="diff-red">G</b><b class="diff-red">u</b><b class="diff-red">y</b>/VOEDWC2jGDo1iUit<b class="diff-red">M</b>WFaROy1<b class="diff-red">K</b>HkYRi/ru<b class="diff-red">0</b>19BZIUU<b class="diff-red">2</b>5xIUeL7t<b class="diff-red">D</b>cmCasu<b class="diff-red">1</b>YK<b class="diff-red">y</b>zj2MWTzpZdHjDM<b class="diff-red">P</b>U4<b class="diff-red">o</b>a5o5oa2j2soUnS<b class="diff-red">1</b>n6K5VSf<b class="diff-red">9</b>Gxxnhj<b class="diff-red">t</b>cwoBp3q<b class="diff-red">i</b>xM3p085zkdyye46Cx4jaS+nSk</div>
+      </div>
+
+      <div class="i18n-en">
+        <h2>AI Assistance Note</h2>
+        <p class="muted">Parts of the software implementation and this documentation were assisted by AI to improve development and authoring efficiency.</p>
+        <h3>Example</h3>
+
+        <p>Original N:</p>
+        <div class="mono-box mono-box--n"><b>N</b> = duDe1rHc22OLeI9tElSwEIhKIx9X/VOEDWC2jGDo1iUitTWFaROy1KHuYRi/ruz19BZIUUE5xIUeL7tzVmCasufYKwzj2MWTzpZdHjDMoU4ow5o5oa2j2soUnSQn6K5VSfhGxxnhmtcwoBp3qiaM3p085zkdyye46Cx4jaS+nSk</div>
+
+        <p>Half-nibble tweak (minimal change vs N):</p>
+        <div class="mono-box"><b>N1</b> = duDe1rHc22OLeI9tElSw<b class="diff-red">B</b>IhKIx9X/VOEDWC2jGDo1iUitTWFaROy1KHuYRi/ruz19BZIUUE5xIUeL7tzVmCasufYKwzj2MWTzpZdHjDMoU4ow5o5oa2j2soUnSQn6K5VSfhGxxnhmtcwoBp3qiaM3p085zkdyye46Cx4jaS+nSk</div>
+
+        <p>Fixed CRC32 variant (CRC32 preserved after replacement):</p>
+        <div class="mono-box"><b>N2</b> = duDe1<b class="diff-red">I</b>Hc22OLeI9tElSwEIhKIx9X/VOEDWC2jGDo1iUitTWFaROy1<b class="diff-red">H</b>HuY<b class="diff-red">R</b>S/ruz19BZIUUE5xIUeL7tzVmCasuf<b class="diff-red">Q</b>Kwzj2MWTzpZdHjDMoU4ow5o5oa2j2soUnSQ<b class="diff-red">y</b>6K5VSfhGxxnhmtc<b class="diff-red">w</b>kBp3q<b class="diff-red">N</b>aM3p085zkdyye4<b class="diff-red">J</b>C<b class="diff-red">x</b>fjaS+nSk</div>
+
+        <p>Another illustrative variant:</p>
+        <div class="mono-box"><b>N3</b> = <b class="diff-red">k</b><b class="diff-red">e</b><b class="diff-red">y</b><b class="diff-red">g</b><b class="diff-red">e</b><b class="diff-red">n</b><b class="diff-red">G</b><b class="diff-red">e</b><b class="diff-red">n</b><b class="diff-red">e</b><b class="diff-red">r</b><b class="diff-red">a</b><b class="diff-red">t</b><b class="diff-red">e</b><b class="diff-red">d</b><b class="diff-red">B</b><b class="diff-red">y</b><b class="diff-red">S</b><b class="diff-red">o</b><b class="diff-red">m</b><b class="diff-red">e</b><b class="diff-red">C</b><b class="diff-red">o</b><b class="diff-red">o</b><b class="diff-red">l</b><b class="diff-red">G</b><b class="diff-red">u</b><b class="diff-red">y</b>/VOEDWC2jGDo1iUit<b class="diff-red">M</b>WFaROy1<b class="diff-red">K</b>HkYRi/ru<b class="diff-red">0</b>19BZIUU<b class="diff-red">2</b>5xIUeL7t<b class="diff-red">D</b>cmCasu<b class="diff-red">1</b>YK<b class="diff-red">y</b>zj2MWTzpZdHjDM<b class="diff-red">P</b>U4<b class="diff-red">o</b>a5o5oa2j2soUnS<b class="diff-red">1</b>n6K5VSf<b class="diff-red">9</b>Gxxnhj<b class="diff-red">t</b>cwoBp3q<b class="diff-red">i</b>xM3p085zkdyye46Cx4jaS+nSk</div>
+      </div>
+    </section>
+    <!-- === /RSA Examples === -->
+    <section id="guide">
+      <h2 data-i18n="guide.title">新手指南</h2>
+      <p data-i18n="guide.intro">欢迎使用 RSA 补丁工具箱！本节帮助你快速完成一次从粘贴到查看结果的完整流程。</p>
+      <h3 data-i18n="guide.ui">界面速览</h3>
+      <ul>
+        <li data-i18n="guide.ui.top">顶部：输入区（粘贴/识别/格式转换/翻转）。</li>
+        <li data-i18n="guide.ui.mid">中部：参数与选项区（微调字节模式、固定 CRC32 模式与通用选项）。</li>
+        <li data-i18n="guide.ui.bot">底部：操作与日志（开始/停止/清空日志/帮助/日志窗口）。</li>
+      </ul>
+
+
+<h3 data-i18n="guide.quick">快速开始</h3>
+      <ol>
+        <li data-i18n="guide.q1">点击 粘贴[P] 导入 N；自动识别格式（Hex/Decimal/Base64）。</li>
+        <li data-i18n="guide.q2">若识别不符，点击 isHEX / isDecimal / isBase64 手动纠正（不触发转换）。</li>
+        <li data-i18n="guide.q3">需要格式转换？更改格式下拉框即可（例如 Hex → Base64）。</li>
+        <li data-i18n="guide.q4">选择运行模式：
+          <ul>
+            <li data-i18n="guide.q4a">微调字节模式：设定“尝试替换位置”与“方向”，可选“按半字节”与“输入的HEX是字符串”。</li>
+            <li data-i18n="guide.q4b">固定 CRC32 模式：点击 掩码 定义可变(*)/冻结位，配置允许字符集与 Unicode 开关。</li>
+          </ul>
+        </li>
+        <li data-i18n="guide.q5">点击 开始。候选会输出到日志窗口，差异位置以红色粗体标注。</li>
+      </ol>
+      <h3 data-i18n="guide.hotkeys">常用快捷</h3>
+      <ul>
+        <li data-i18n="guide.hk.rev">翻转[R]：仅对 Hex 生效，按字节序反转。</li>
+        <li data-i18n="guide.hk.dry">Dry Run：只演示流程不做真实计算。</li>
+        <li data-i18n="guide.hk.help">帮助：输出内置示例（带标记）。</li>
+      </ul>
+
+      <h2 data-i18n="opts.title">选项说明</h2>
+      <h3 data-i18n="opts.top">顶部输入区</h3>
+      <ul>
+        <li data-i18n="opts.top.n">TextN：承载 N 的文本，支持 Hex/Decimal/Base64。</li>
+        <li data-i18n="opts.top.fmt">ComboFormat：切换显示/转换格式（HEX/hex/Decimal/Base64）。</li>
+        <li data-i18n="opts.top.paste">粘贴[P]：清理空白并自动识别；Base64 自动补齐“=”。</li>
+        <li data-i18n="opts.top.rev">翻转[R]：Hex 下按 2 字符＝1 字节整体反转。</li>
+        <li data-i18n="opts.top.fix">isHEX / isDecimal / isBase64 / isHex(lower)：仅改下拉框文本，不转换内容。</li>
+      </ul>
+      <h3 data-i18n="opts.mid1">中部选项区 · 微调字节模式</h3>
+      <ul>
+        <li data-i18n="opts.mid1.pos">尝试替换位置（1 基）。</li>
+        <li data-i18n="opts.mid1.dir">方向：仅当前 / 向左 / 向右。</li>
+        <li data-i18n="opts.mid1.nib">按半字节：对 nibble（高/低 4 位）微调。</li>
+        <li data-i18n="opts.mid1.hexstr">输入的HEX是字符串：按字符或按字节处理 Hex。</li>
+      </ul>
+      <h3 data-i18n="opts.mid2">中部选项区 · 固定 CRC32 模式</h3>
+      <ul>
+        <li data-i18n="opts.mid2.mask">掩码：“*”可变，其他字符冻结。</li>
+        <li data-i18n="opts.mid2.charset">允许字符集：Hex/Dec/Base64 或自定义。</li>
+        <li data-i18n="opts.mid2.uni">Unicode：ASCII / Unicode(UTF-16LE)。</li>
+        <li data-i18n="opts.mid2.need">需要字符数：有效可修改位数量。</li>
+      </ul>
+      <h3 data-i18n="opts.common">通用选项</h3>
+      <ul>
+        <li data-i18n="opts.c.dry">Dry Run：仅记录流程不执行计算。</li>
+        <li data-i18n="opts.c.rsatest">Rsa Test：对 N/D 进行随机加/解密验证。</li>
+        <li data-i18n="opts.c.brent">Brent 迭代次数：控制 Rho–Brent 迭代上限。</li>
+        <li data-i18n="opts.c.smallp">小素数试除：启用基础试除。</li>
+        <li data-i18n="opts.c.ecm">尝试小曲线：ECM 小曲线数量。</li>
+        <li data-i18n="opts.c.minres">结果数量下限：最少生成条数。</li>
+        <li data-i18n="opts.c.log">结果记录日志：将候选写入日志。</li>
+        <li data-i18n="opts.c.threads">线程数：设置并发度。</li>
+        <li data-i18n="opts.c.primeN">接受素数 N：允许 N 为素数。</li>
+      </ul>
+      <h3 data-i18n="opts.bottom">底部操作与日志</h3>
+      <ul>
+        <li data-i18n="opts.b.start">开始：读取选项并运行，结果打印到 RichTextLog。</li>
+        <li data-i18n="opts.b.stop">停止：中止当前任务。</li>
+        <li data-i18n="opts.b.clear">清空日志：清除输出。</li>
+        <li data-i18n="opts.b.help">帮助：显示内置帮助与示例。</li>
+      </ul>
+      <h3 data-i18n="mask.title">掩码编辑器（FrmMaskEditor）</h3>
+      <ul>
+        <li data-i18n="mask.a">A 框：显示原始字符串，冻结段以蓝色提示；光标联动高亮。</li>
+        <li data-i18n="mask.b">B 框：编辑掩码，“*”=可变；删除恢复为“*”。</li>
+        <li data-i18n="mask.c">保存 / 保存并随机填充：校验并持久化，可立即生成一次随机解。</li>
+        <li data-i18n="mask.d">提示区：动态展示允许字符与长度信息。</li>
+      </ul>
+    </section>
+
+    <section id="download">
+      <h2 data-i18n="dl.title">下载</h2>
+      <p class="muted" data-i18n="dl.note">Windows 版免安装，解压即用；其他平台可自行编译。</p>
+      <a href="https://github.com/FTSTT/RSA-PATCH-TOOLKIT/releases" class="btn" data-i18n="dl.win">⬇ Windows x64</a>
+      <a href="https://github.com/FTSTT/RSA-PATCH-TOOLKIT/archive/refs/heads/main.zip" class="btn" data-i18n="dl.src">📦 源代码</a>
+    </section>
+
+    <section id="shots">
+      <h2 data-i18n="shots.title">界面截图</h2>
+      <p data-i18n="shots.note">工具主要界面与功能演示</p>
+      
+      <div class="screenshots-container">
+        <div class="screenshot-item">
+          <img data-img="main" src="" alt="RSA补丁工具箱主界面" class="screenshot-img" loading="lazy">
+          <p class="screenshot-caption" data-i18n="shots.cap1">主界面 - 微调字节模式</p>
+        </div>
+        <div class="screenshot-item">
+          <img data-img="mask" src="" alt="RSA补丁工具箱掩码编辑界面" class="screenshot-img" loading="lazy">
+          <p class="screenshot-caption" data-i18n="shots.cap2">掩码编辑器 - 固定CRC32模式配置</p>
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer>
+    <p data-i18n="foot.note">© 2025 RSA 补丁工具箱 / RSA PATCH TOOLKIT. 保留所有权利。</p>
+  </footer>
+
+  <script>
+    // i18n dictionary
+    const i18n = {
+      'zh-CN': {
+        'hero.title': 'RSA 补丁工具箱',
+        'hero.tag': '“RSA 补丁工具箱（RSA PATCH TOOLKIT）并不适合用于分解大数，只是为了好玩；用于半字节 / 1 字节 / 固定 CRC32 补丁辅助。”',
+        'hero.cta': '立即下载', 'hero.guide':'新手指南', 'hero.screens':'界面截图',
+        'guide.title':'新手指南',
+        'guide.intro':'欢迎使用 RSA 补丁工具箱！本节帮助你快速完成一次从粘贴到查看结果的完整流程。',
+        'guide.ui':'界面速览',
+        'guide.ui.top':'顶部：输入区（粘贴/识别/格式转换/翻转）。',
+        'guide.ui.mid':'中部：参数与选项区（微调字节模式、固定 CRC32 模式与通用选项）。',
+        'guide.ui.bot':'底部：操作与日志（开始/停止/清空日志/帮助/日志窗口）。',
+        'guide.quick':'快速开始',
+        'guide.q1':'点击 粘贴[P] 导入 N；自动识别格式（Hex/Decimal/Base64）。',
+        'guide.q2':'若识别不符，点击 isHEX / isDecimal / isBase64 手动纠正（不触发转换）。',
+        'guide.q3':'需要格式转换？更改格式下拉框即可（例如 Hex → Base64）。',
+        'guide.q4':'选择运行模式：',
+        'guide.q4a':'微调字节模式：设定“尝试替换位置”与“方向”，可选“按半字节”与“输入的HEX是字符串”。',
+        'guide.q4b':'固定 CRC32 模式：点击 掩码 定义可变(*)/冻结位，配置允许字符集与 Unicode 开关。',
+        'guide.q5':'点击 开始。候选会输出到日志窗口，差异位置以红色粗体标注。',
+        'guide.hotkeys':'常用快捷',
+        'guide.hk.rev':'翻转[R]：仅对 Hex 生效，按字节序反转。',
+        'guide.hk.dry':'Dry Run：只演示流程不做真实计算。',
+        'guide.hk.help':'帮助：输出内置示例（带标记）。',
+        'opts.title':'选项说明',
+        'opts.top':'顶部输入区',
+        'opts.top.n':'TextN：承载 N 的文本，支持 Hex/Decimal/Base64。',
+        'opts.top.fmt':'ComboFormat：切换显示/转换格式（HEX/hex/Decimal/Base64）。',
+        'opts.top.paste':'粘贴[P]：清理空白并自动识别；Base64 自动补齐“=”。',
+        'opts.top.rev':'翻转[R]：Hex 下按 2 字符＝1 字节整体反转。',
+        'opts.top.fix':'isHEX / isDecimal / isBase64 / isHex(lower)：仅改下拉框文本，不转换内容。',
+        'opts.mid1':'中部选项区 · 微调字节模式',
+        'opts.mid1.pos':'尝试替换位置（1 基）。',
+        'opts.mid1.dir':'方向：仅当前 / 向左 / 向右。',
+        'opts.mid1.nib':'按半字节：对 nibble（高/低 4 位）微调。',
+        'opts.mid1.hexstr':'输入的HEX是字符串：按字符或按字节处理 Hex。',
+        'opts.mid2':'中部选项区 · 固定 CRC32 模式',
+        'opts.mid2.mask':'掩码：“*”可变，其他字符冻结。',
+        'opts.mid2.charset':'允许字符集：Hex/Dec/Base64 或自定义。',
+        'opts.mid2.uni':'Unicode：ASCII / Unicode(UTF-16LE)。',
+        'opts.mid2.need':'需要字符数：有效可修改位数量。',
+        'opts.common':'通用选项',
+        'opts.c.dry':'Dry Run：仅记录流程不执行计算。',
+        'opts.c.rsatest':'Rsa Test：对 N/D 进行随机加/解密验证。',
+        'opts.c.brent':'Brent 迭代次数：控制 Rho–Brent 迭代上限。',
+        'opts.c.smallp':'小素数试除：启用基础试除。',
+        'opts.c.ecm':'尝试小曲线：ECM 小曲线数量。',
+        'opts.c.minres':'结果数量下限：最少生成条数。',
+        'opts.c.log':'结果记录日志：将候选写入日志。',
+        'opts.c.threads':'线程数：设置并发度。',
+        'opts.c.primeN':'接受素数 N：允许 N 为素数。',
+        'opts.bottom':'底部操作与日志',
+        'opts.b.start':'开始：读取选项并运行，结果打印到 RichTextLog。',
+        'opts.b.stop':'停止：中止当前任务。',
+        'opts.b.clear':'清空日志：清除输出。',
+        'opts.b.help':'帮助：显示内置帮助与示例。',
+        'mask.title':'掩码编辑器（FrmMaskEditor）',
+        'mask.a':'A 框：显示原始字符串，冻结段以蓝色提示；光标联动高亮。',
+        'mask.b':'B 框：编辑掩码，“*”=可变；删除恢复为“*”。',
+        'mask.c':'保存 / 保存并随机填充：校验并持久化，可立即生成一次随机解。',
+        'mask.d':'提示区：动态展示允许字符与长度信息。',
+        'dl.title':'下载',
+        'dl.note':'Windows 版免安装，解压即用；其他平台可自行编译。',
+        'dl.win':'⬇ Windows x64',
+        'dl.src':'📦 源代码',
+        'shots.title':'界面截图',
+        'shots.note':'工具主要界面与功能演示',
+        'shots.cap1': '主界面 - 微调字节模式',
+        'shots.cap2': '掩码编辑器 - 固定CRC32模式配置',
+        'foot.note':'© 2025 RSA 补丁工具箱 / RSA PATCH TOOLKIT. 保留所有权利。'
+      },
+      'en': {
+        'hero.title': 'RSA PATCH TOOLKIT',
+        'hero.tag': '“RSA PATCH TOOLKIT is not meant for factoring big integers — it\'s just for fun; use it for nibble / 1-byte / fixed CRC32 patch assistance.”',
+        'hero.cta': 'Download', 'hero.guide':'Newcomer Guide', 'hero.screens':'Screenshots',
+        'guide.title':'Newcomer Guide',
+        'guide.intro':'Welcome to RSA PATCH TOOLKIT! This section walks you through the full flow from paste to results.',
+        'guide.ui':'Interface Overview',
+        'guide.ui.top':'Top: input area (paste / detect / convert / reverse).',
+        'guide.ui.mid':'Middle: options (Byte Tweak, Fixed CRC32, and common settings).',
+        'guide.ui.bot':'Bottom: operations & log (Start / Stop / Clear / Help / Log).',
+        'guide.quick':'Quick Start',
+        'guide.q1':'Click Paste [P] to import N; format auto-detected (Hex/Decimal/Base64).',
+        'guide.q2':'If detection is wrong, click isHEX / isDecimal / isBase64 to correct (no conversion).',
+        'guide.q3':'Need format conversion? Change the format dropdown (e.g., Hex → Base64).',
+        'guide.q4':'Choose a run mode:',
+        'guide.q4a':'Byte Tweak: set "Try replace at" and "Direction"; optional Half-nibble and "HEX input is a string".',
+        'guide.q4b':'Fixed CRC32: define mask with * / frozen, set allowed charset and Unicode toggle.',
+        'guide.q5':'Click Start. Candidates appear in the log with diffs highlighted in bold red.',
+        'guide.hotkeys':'Handy Shortcuts',
+        'guide.hk.rev':'Reverse [R]: Hex only; reverse by byte order.',
+        'guide.hk.dry':'Dry Run: simulate without real computation.',
+        'guide.hk.help':'Help: print built-in examples (with markers).',
+        'opts.title':'Options',
+        'opts.top':'Top Input Area',
+        'opts.top.n':'TextN: holds N; supports Hex/Decimal/Base64.',
+        'opts.top.fmt':'ComboFormat: switch display/convert format (HEX/hex/Decimal/Base64).',
+        'opts.top.paste':'Paste [P]: trims whitespace and auto-detects; Base64 auto-pads “=”.',
+        'opts.top.rev':'Reverse [R]: for Hex, reverses every two chars (one byte).',
+        'opts.top.fix':'isHEX / isDecimal / isBase64 / isHex(lower): changes dropdown label only; no conversion.',
+        'opts.mid1':'Middle Options · Byte Tweak',
+        'opts.mid1.pos':'Try replace at (1-based).',
+        'opts.mid1.dir':'Direction: current / left / right.',
+        'opts.mid1.nib':'Half-nibble: tweak high/low 4 bits.',
+        'opts.mid1.hexstr':'HEX input is a string: treat as characters or bytes.',
+        'opts.mid2':'Middle Options · Fixed CRC32',
+        'opts.mid2.mask':'Mask: “*” is variable; others frozen.',
+        'opts.mid2.charset':'Allowed charset: Hex/Dec/Base64 or custom.',
+        'opts.mid2.uni':'Unicode: ASCII / Unicode (UTF-16LE).',
+        'opts.mid2.need':'Required chars: number of editable positions.',
+        'opts.common':'Common Options',
+        'opts.c.dry':'Dry Run: log only, no computation.',
+        'opts.c.rsatest':'Rsa Test: random enc/dec check for N/D.',
+        'opts.c.brent':'Brent iterations: cap for Rho–Brent.',
+        'opts.c.smallp':'Trial small primes.',
+        'opts.c.ecm':'ECM curves to try (small).',
+        'opts.c.minres':'Minimum results: lower bound of generated items.',
+        'opts.c.log':'Log candidates to the output.',
+        'opts.c.threads':'Threads: parallelism.',
+        'opts.c.primeN':'Accept prime N.',
+        'opts.bottom':'Bottom · Operations & Log',
+        'opts.b.start':'Start: read options and run; print results to RichTextLog.',
+        'opts.b.stop':'Stop: abort current task.',
+        'opts.b.clear':'Clear log output.',
+        'opts.b.help':'Help: show built-in help and examples.',
+        'mask.title':'Mask Editor (FrmMaskEditor)',
+        'mask.a':'Box A: original text; frozen segments in blue; caret-linked highlight.',
+        'mask.b':'Box B: edit mask; “*” = variable; delete restores to “*”.',
+        'mask.c':'Save / Save & Random Fill: validate & persist; can generate one random solution immediately.',
+        'mask.d':'Info area: shows allowed chars and lengths in real time.',
+        'dl.title':'Downloads',
+        'dl.note':'Portable for Windows; build manually for other OS.',
+        'dl.win':'⬇ Windows x64',
+        'dl.src':'📦 Source Code',
+        'shots.title':'Screenshots',
+        'shots.note':'Main interface and feature demos',
+        'shots.cap1': 'Main Interface - Byte Tweak Mode',
+        'shots.cap2': 'Mask Editor - Fixed CRC32 Configuration',
+        'foot.note':'© 2025 RSA PATCH TOOLKIT. All rights reserved.'
+      }
+    };
+
+    function pickLang(){
+      const nav = (navigator.languages && navigator.languages[0]) || navigator.language || 'en';
+      return nav.startsWith('zh') ? 'zh-CN' : 'en';
+    }
+
+    function applyI18N(lang){
+      const d = i18n[lang] || i18n['en'];
+      document.documentElement.lang = lang;
+      document.title = lang==='zh-CN' ? 'RSA 补丁工具箱' : 'RSA PATCH TOOLKIT';
+
+      // 更新文本内容
+      document.querySelectorAll('[data-i18n]').forEach(el=>{
+        const key = el.getAttribute('data-i18n');
+        if(d[key]) el.textContent = d[key];
+      });
+
+      // 根据语言更新图片
+      const imgMap = {
+        main: 'shot1',
+        mask: 'shot2'
+      };
+      document.querySelectorAll('[data-img]').forEach(imgEl => {
+        const imgKey = imgEl.getAttribute('data-img');
+        const imgPrefix = imgMap[imgKey];
+        imgEl.src = `${imgPrefix}-${lang}.png`;
+        // 更新alt文本
+        const altText = lang === 'zh-CN' 
+          ? (imgKey === 'main' ? 'RSA补丁工具箱主界面' : 'RSA补丁工具箱掩码编辑界面')
+          : (imgKey === 'main' ? 'RSA Patch Toolkit Main Interface' : 'RSA Patch Toolkit Mask Editor');
+        imgEl.alt = altText;
+      });
+
+      // 更新meta标签
+      const md = document.querySelector('meta[name="description"]');
+      if(md) md.setAttribute('content', lang==='zh-CN' ? '用于 半字节/1字节/固定CRC32 补丁辅助的极客小工具箱。' : 'Geeky toolkit for nibble / 1‑byte / fixed CRC32 patch assistance. Not for big‑integer factoring.');
+      const ogt = document.querySelector('meta[property="og:title"]');
+      if(ogt) ogt.setAttribute('content', document.title);
+      const ogd = document.querySelector('meta[property="og:description"]');
+      if(ogd) ogd.setAttribute('content', md ? md.getAttribute('content') : '');
+    }
+
+    applyI18N(pickLang());
+  </script>
+</body>
+</html>
