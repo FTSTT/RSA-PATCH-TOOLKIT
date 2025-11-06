@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35527.113
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "hiPrime", "hiPrime.vbproj", "{BA3962E5-F372-47AE-ABEF-17B158312AED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Debug|x64.ActiveCfg = Debug|x64
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Debug|x64.Build.0 = Debug|x64
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Release|x64.ActiveCfg = Release|x64
+		{BA3962E5-F372-47AE-ABEF-17B158312AED}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
