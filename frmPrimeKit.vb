@@ -1353,7 +1353,9 @@ ExitIt:
                 For Each item In b1List
                     Dim f1 = EgwNative.PM1_FindFactor(bigNumber, curves:=item.Item2, B1:=item.Item1 / 1000)
                     If Not (String.IsNullOrEmpty(f1)) Then
-
+                        If Not EgwNative.IsProbablePrime(f1) Then
+                            Exit Sub
+                        End If
                         'LogRich(RichTextLog, CStr(Loc.T("Text.d292d05f", "PM1发现因数=")) & f1 & vbCrLf)
                         quotient = EgwNative.TDivQR(bigNumber, f1).q
                         If EgwNative.IsProbablePrime(quotient) Then
@@ -1370,6 +1372,9 @@ ExitIt:
 
                     Dim f2 = EgwNative.PP1_FindFactor(bigNumber, curves:=item.Item2, B1:=item.Item1 / 1000)
                     If Not (String.IsNullOrEmpty(f2)) Then
+                        If Not EgwNative.IsProbablePrime(f2) Then
+                            Exit Sub
+                        End If
                         'LogRich(RichTextLog, CStr(Loc.T("Text.6afe3d1c", "PP1发现因数=")) & f2 & vbCrLf)
                         quotient = EgwNative.TDivQR(bigNumber, f2).q
                         If EgwNative.IsProbablePrime(quotient) Then
@@ -1386,6 +1391,9 @@ ExitIt:
 
                     Dim f As String = EgwNative.ECM_FindFactor(bigNumber, curves:=item.Item2, B1:=item.Item1 / 20)
                     If Not (String.IsNullOrEmpty(f)) Then
+                        If Not EgwNative.IsProbablePrime(f) Then
+                            Exit Sub
+                        End If
 
                         'LogRich(RichTextLog, CStr(Loc.T("Text.630509ca", "ECM发现因数=")) & f & vbCrLf)
                         quotient = EgwNative.TDivQR(bigNumber, f).q
